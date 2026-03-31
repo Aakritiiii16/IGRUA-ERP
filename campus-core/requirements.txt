@@ -1,0 +1,13 @@
+# Infrastructure Requirements
+Node.js >= 20.x
+npm >= 10.x
+PostgreSQL >= 15.x
+OpenSSL (for NextAuth secrets)
+
+# Core Project Dependencies (managed via npm)
+next: 15.1.0
+prisma: 6.1.x
+next-auth: 5.0.0-beta
+tailwindcss
+typescript
+bcryptjs
