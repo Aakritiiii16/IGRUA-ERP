@@ -174,5 +174,79 @@ export async function deleteUser(id: string) {
         where: { id }
     });
 
+
     revalidatePath('/admin');
+}
+
+export async function uploadCSV(formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+        throw new Error('Unauthorized');
+    }
+
+    const file = formData.get('csvFile') as File;
+    if (!file) {
+        throw new Error("No file uploaded");
+    }
+
+    const text = await file.text();
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length < 2) throw new Error("CSV file must contain headers and at least one row");
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    
+    const results = [];
+    for (let i = 1; i < lines.length; i++) {
+        // Split handling quoted commas
+        const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+        const obj: any = {};
+        for (let j = 0; j < headers.length; j++) {
+            obj[headers[j]] = currentline[j];
+        }
+        results.push(obj);
+    }
+
+    let successCount = 0;
+    
+    for (const data of results) {
+        if (!data.name || !data.email || !data.dateofbirth || !data.role) continue;
+
+        // Password Logic
+        const nameParts = data.name.trim().split(' ');
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+        const [year, month, day] = data.dateofbirth.split('-');
+        const formattedDOB = `${day}${month}${year}`;
+        const initialPassword = `${lastName}${formattedDOB}`;
+        
+        const roleStr = data.role.toUpperCase();
+        
+        try {
+            await prisma.user.create({
+                data: {
+                    name: data.name,
+                    email: data.email,
+                    password: initialPassword,
+                    role: roleStr as any,
+                    rollNumber: data.rollnumber || null,
+                    employeeId: data.employeeid || null,
+                    dateOfBirth: new Date(data.dateofbirth),
+                    profile: {
+                        create: {
+                            course: data.course || null,
+                            age: data.age ? parseInt(data.age) : null,
+                            height: data.height || null,
+                            department: data.department || null
+                        }
+                    }
+                }
+            });
+            successCount++;
+        } catch(e) {
+            console.error("Failed to insert user from CSV", data.email, e);
+        }
+    }
+
+    console.log(`CSV Upload: Successfully imported ${successCount} users.`);
+    revalidatePath('/admin');
+    return { success: true, count: successCount };
 }

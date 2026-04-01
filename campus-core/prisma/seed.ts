@@ -8,36 +8,36 @@ async function main() {
     // Create Admin User
     const admin = await prisma.user.upsert({
         where: { email: 'admin@campuscore.com' },
-        update: {},
+        update: { password: 'admin' },
         create: {
             email: 'admin@campuscore.com',
             name: 'Admin User',
             role: Role.ADMIN,
-            password: 'hashedpasswordisnotcheckedrightnow' // In production, hash this!
+            password: 'admin'
         }
     });
 
     // Create Faculty User
     const faculty = await prisma.user.upsert({
         where: { email: 'faculty@campuscore.com' },
-        update: {},
+        update: { password: 'faculty' },
         create: {
             email: 'faculty@campuscore.com',
             name: 'Faculty User',
             role: Role.FACULTY,
-            password: 'hashedpasswordisnotcheckedrightnow'
+            password: 'faculty'
         }
     });
 
     // Create Student User
     const student = await prisma.user.upsert({
         where: { email: 'student@campuscore.com' },
-        update: {},
+        update: { password: 'student' },
         create: {
             email: 'student@campuscore.com',
             name: 'Student User',
             role: Role.STUDENT,
-            password: 'hashedpasswordisnotcheckedrightnow'
+            password: 'student'
         }
     });
 
