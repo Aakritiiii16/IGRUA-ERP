@@ -48,10 +48,10 @@ export default async function AdminDashboard() {
                 <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm lg:col-span-2">
                     <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-3 mb-4">User Management</h2>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                         {/* Add User Form */}
-                        <div className="md:col-span-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <h3 className="text-sm font-bold text-slate-700 mb-3">Add New User</h3>
+                        <div className="lg:col-span-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 className="text-sm font-bold text-slate-700 mb-3">Add New User (Manual)</h3>
                             <form action={createUser} className="space-y-3">
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Full Name</label>
@@ -98,8 +98,36 @@ export default async function AdminDashboard() {
                             </form>
                         </div>
 
+                        {/* CSV Upload Form */}
+                        <div className="lg:col-span-1 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h3 className="text-sm font-bold text-blue-800 mb-3">Bulk Enrollment (CSV)</h3>
+                            <form action={async (formData) => {
+                                'use server';
+                                const { uploadCSV } = await import('./actions');
+                                await uploadCSV(formData);
+                            }} className="space-y-4">
+                                <p className="text-[10px] text-blue-700 leading-tight">
+                                    Upload a CSV with headers: <br />
+                                    <span className="font-mono bg-blue-100 px-1 rounded">name, email, role, dateOfBirth, course, rollNumber, employeeId</span>
+                                </p>
+                                <div>
+                                    <input 
+                                        type="file" 
+                                        name="csvFile" 
+                                        required 
+                                        accept=".csv"
+                                        className="w-full text-xs text-slate-500 file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
+                                    />
+                                </div>
+                                <button type="submit" className="w-full bg-blue-700 hover:bg-blue-600 text-white text-xs font-bold py-2 rounded transition-colors tracking-wide">
+                                    UPLOAD & IMPORT
+                                </button>
+                                <p className="text-[10px] text-blue-500 italic text-center">Passwords auto-generated: LastName + DDMMYYYY</p>
+                            </form>
+                        </div>
+
                         {/* User List */}
-                        <div className="md:col-span-2 overflow-x-auto border border-slate-200 rounded-lg">
+                        <div className="lg:col-span-2 overflow-x-auto border border-slate-200 rounded-lg max-h-[400px]">
                             <table className="w-full text-left text-sm border-collapse">
                                 <thead className="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                                     <tr>

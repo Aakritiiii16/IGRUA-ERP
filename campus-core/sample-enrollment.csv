@@ -1,0 +1,5 @@
+name,email,role,dateOfBirth,course,rollNumber,employeeId,age,height,department
+"Aisha Patel",aisha@campus.edu,STUDENT,2002-05-14,"Computer Science","CS-2023-01",,21,"165cm","CSE"
+"Rajesh Kumar",rajesh@campus.edu,STUDENT,2001-08-22,"Mechanical Engineering","ME-2023-44",,22,"178cm","Mech"
+"Dr. Sarah Smith",sarah@campus.edu,FACULTY,1980-11-05,,,EMP-001,,,
+"Dr. John Doe",john@campus.edu,FACULTY,1975-02-19,,,EMP-002,,,
