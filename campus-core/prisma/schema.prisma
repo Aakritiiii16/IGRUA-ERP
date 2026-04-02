@@ -8,27 +8,23 @@ datasource db {
 }
 
 model User {
-  id         String      @id @default(uuid())
-  email      String      @unique
-  name       String?
-  password   String?
-  role       Role        @default(STUDENT)
-  image      String?
-  rollNumber String?     @unique
-  employeeId String?     @unique
+  id          String      @id @default(uuid())
+  email       String      @unique
+  name        String?
+  password    String?
+  role        Role        @default(STUDENT)
+  image       String?
+  rollNumber  String?     @unique
+  employeeId  String?     @unique
   dateOfBirth DateTime?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  createdBy  String?
-  isDeleted  Boolean     @default(false)
-  auditLogs  AuditLog[]
-  notices            Notice[]            @relation("NoticeAuthor")
-  profile            Profile?
-  timeTables         TimeTable[]
-  attendances        Attendance[]        @relation("StudentAttendance")
-  attendanceRequests AttendanceRequest[] @relation("StudentAttendanceRequests")
-  documents          Document[]
-  marks              Mark[]              @relation("StudentMarks")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdBy   String?
+  isDeleted   Boolean     @default(false)
+  auditLogs   AuditLog[]
+  notices     Notice[]    @relation("NoticeAuthor")
+  profile     Profile?
+  timeTables  TimeTable[]
 }
 
 model Profile {
@@ -37,18 +33,14 @@ model Profile {
   phone     String?
   address   String?
   bio       String?
-  age         Int?
-  height      String?
-  course      String?
-  passingYear Int?
-  department  String?
-  hostelName  String?
-  roomNumber  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String?
-  isDeleted   Boolean  @default(false)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  age       Int?
+  height    String?
+  course    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  isDeleted Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AuditLog {
@@ -74,11 +66,10 @@ model TimeTable {
   endTime   String
   className String?
   facultyId String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  isDeleted   Boolean      @default(false)
-  faculty     User         @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  attendances Attendance[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+  faculty   User     @relation(fields: [facultyId], references: [id], onDelete: Cascade)
 }
 
 model Notice {
@@ -95,57 +86,4 @@ enum Role {
   ADMIN
   FACULTY
   STUDENT
-}
-
-model Attendance {
-  id          String              @id @default(uuid())
-  studentId   String
-  timeTableId String
-  date        DateTime
-  status      String              // PRESENT, ABSENT, LATE
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  isDeleted   Boolean             @default(false)
-  student     User                @relation("StudentAttendance", fields: [studentId], references: [id], onDelete: Cascade)
-  timeTable   TimeTable           @relation(fields: [timeTableId], references: [id])
-  requests    AttendanceRequest[]
-}
-
-model AttendanceRequest {
-  id           String     @id @default(uuid())
-  studentId    String
-  attendanceId String
-  reason       String
-  status       String     // PENDING, APPROVED, REJECTED
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  isDeleted    Boolean    @default(false)
-  student      User       @relation("StudentAttendanceRequests", fields: [studentId], references: [id], onDelete: Cascade)
-  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
-}
-
-model Document {
-  id        String   @id @default(uuid())
-  userId    String
-  title     String
-  url       String
-  type      String   // ID, CERTIFICATE, ASSIGNMENT
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Mark {
-  id        String   @id @default(uuid())
-  studentId String
-  title     String
-  score     Float
-  maxScore  Float
-  type      String   // OLT, ASSIGNMENT, REPORT
-  course    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false)
-  student   User     @relation("StudentMarks", fields: [studentId], references: [id], onDelete: Cascade)
 }
